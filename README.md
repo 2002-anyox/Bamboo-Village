@@ -36,11 +36,38 @@ Built with **Next.js 15 (App Router)**, **TypeScript**, **Tailwind CSS v4**,
 
 ## Quick start
 
+Requires **Node 18.18 or newer** (`node --version` to check).
+
+**macOS / Linux**
+
 ```bash
 npm install
-cp .env.example .env.local     # then add your WhatsApp number
+cp .env.example .env.local     # optional — enables one-tap WhatsApp sending
 npm run dev                    # http://localhost:3000
 ```
+
+**Windows (PowerShell)**
+
+```powershell
+npm.cmd install
+Copy-Item .env.example .env.local   # optional
+npm.cmd run dev                     # http://localhost:3000
+```
+
+> **Why `npm.cmd`?** PowerShell blocks npm's `npm.ps1` shim by default with
+> *"running scripts is disabled on this system"*. `npm.cmd` is a batch file, so
+> the execution policy does not apply and it just works. To use plain `npm`
+> instead, run this once — user-scoped, no admin rights needed:
+>
+> ```powershell
+> Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
+> ```
+>
+> Command Prompt (`cmd.exe`) is unaffected either way.
+
+The `.env.local` step is optional. Without it the site runs normally and
+WhatsApp actions fall back to copy-to-clipboard — see
+[WhatsApp number](#1-whatsapp-number).
 
 Other scripts:
 
