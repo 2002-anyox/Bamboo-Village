@@ -1,5 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: 'export',
+  basePath: '/Bambo-Village',
+  
   reactStrictMode: true,
   poweredByHeader: false,
   images: {
