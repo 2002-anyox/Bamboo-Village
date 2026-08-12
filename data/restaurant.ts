@@ -51,15 +51,19 @@ export const restaurantConfig = {
   reservationsEmail: '[RESERVATIONS EMAIL ADDRESS]',
 
   address: {
-    line1: '[STREET ADDRESS]',
-    line2: '[NEIGHBOURHOOD / PLOT]',
-    city: 'Kampala',
+    line1: 'Enyau Road',
+    line2: '[PLOT / BUILDING]',
+    city: 'Arua',
     country: 'Uganda',
     /** Used for the "Get directions" link and the map embed. */
-    mapsQuery: 'Bamboo Village Kampala Uganda',
-    /** Replace with the venue's real coordinates for accurate map pins. */
-    lat: 0.3476,
-    lng: 32.5825,
+    mapsQuery: 'Bamboo Village Enyau Road Arua Uganda',
+    /**
+     * These are Arua town centre, NOT the venue itself — accurate enough for
+     * a regional pin, but replace with the exact coordinates before launch.
+     * Get them from Google Maps: right-click the venue → click the lat/long.
+     */
+    lat: 3.0201,
+    lng: 30.9111,
   },
 
   currency: {

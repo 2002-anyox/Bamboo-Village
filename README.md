@@ -164,11 +164,12 @@ anything you forget is obvious on the page:
 phone: '[PHONE NUMBER]',              → '+256 700 123 456'
 email: '[EMAIL ADDRESS]',             → 'hello@bamboovillage.ug'
 address: {
-  line1: '[STREET ADDRESS]',          → 'Plot 14, Bandali Rise'
-  line2: '[NEIGHBOURHOOD / PLOT]',    → 'Bugolobi'
-  city: 'Kampala',
-  mapsQuery: 'Bamboo Village Kampala Uganda',   ← used by "Get directions"
-  lat: 0.3476, lng: 32.5825,                    ← real coordinates
+  line1: 'Enyau Road',
+  line2: '[PLOT / BUILDING]',         → 'Plot 14'
+  city: 'Arua',
+  mapsQuery: 'Bamboo Village Enyau Road Arua Uganda',  ← "Get directions"
+  lat: 3.0201, lng: 30.9111,          ← Arua town centre, not the venue —
+                                        replace with the exact coordinates
 },
 hours: [ { days: 'Friday', hours: '[11:00 — 02:00]', note: 'Live DJ from 21:00' } ],
 socials: [ { label: 'Instagram', handle: '@…', href: '[INSTAGRAM URL]' } ],
@@ -371,7 +372,7 @@ Delivery/Pickup:
 Delivery
 
 Address:
-Plot 14, Bandali Rise, Bugolobi
+Plot 14, Enyau Road, Arua
 
 Special instructions:
 Please make the chicken spicy.
@@ -470,6 +471,8 @@ npm run build && npm run start   # anywhere else, behind a reverse proxy
 - [ ] `NEXT_PUBLIC_WHATSAPP_NUMBER` set and tested on a real phone
 - [ ] `NEXT_PUBLIC_SITE_URL` set to the live domain
 - [ ] Every `[SQUARE BRACKET]` placeholder in `data/restaurant.ts` replaced
+- [ ] Exact venue coordinates set (`address.lat` / `address.lng` currently point
+      at Arua town centre, not the building)
 - [ ] Real opening hours set, and mirrored into the schema in `app/layout.tsx`
 - [ ] Social links point at real profiles
 - [ ] Real menu, prices and dish photography in `data/menu.ts`
