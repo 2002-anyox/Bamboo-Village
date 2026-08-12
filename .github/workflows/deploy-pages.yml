@@ -1,0 +1,82 @@
+name: Deploy preview to GitHub Pages
+
+# Builds the site as a static export and publishes it to GitHub Pages, so
+# there is always a live URL to look at without running anything locally.
+#
+# ONE-TIME SETUP: in the repository, go to
+#   Settings → Pages → Build and deployment → Source → "GitHub Actions"
+# Until that is set, this workflow builds fine but the deploy step fails.
+
+on:
+  push:
+    branches:
+      - main
+      - 'claude/**'
+  workflow_dispatch: # lets you re-run it by hand from the Actions tab
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Never let two deploys race; the newest push wins.
+concurrency:
+  group: github-pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build static export
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - name: Configure Pages
+        id: pages
+        uses: actions/configure-pages@v5
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        env:
+          GITHUB_PAGES: 'true'
+          # Pages serves the site from /<repo-name>/, so the app needs that
+          # prefix baked in. Derived from the repo, so renaming it still works.
+          PAGES_BASE_PATH: /${{ github.event.repository.name }}
+          # Used for canonical URLs, the sitemap and Open Graph tags.
+          NEXT_PUBLIC_SITE_URL: ${{ steps.pages.outputs.base_url }}
+          # Optional. Set under Settings → Secrets and variables → Actions →
+          # Variables to enable one-tap WhatsApp sending on the preview.
+          # Left unset, WhatsApp actions fall back to copy-to-clipboard.
+          NEXT_PUBLIC_WHATSAPP_NUMBER: ${{ vars.NEXT_PUBLIC_WHATSAPP_NUMBER }}
+        run: npm run build
+
+      - name: Stop Pages from running Jekyll
+        # Without this, Jekyll can strip the _next directory and the whole
+        # site loads without styles or JavaScript.
+        run: touch out/.nojekyll
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: out
+
+  deploy:
+    name: Deploy
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

@@ -8,6 +8,8 @@ import { restaurantConfig } from '@/data/restaurant';
  */
 
 export const runtime = 'nodejs';
+/** Rendered once at build time — required for the static Pages export. */
+export const dynamic = 'force-static';
 export const alt = 'Bamboo Village — Restaurant, Bar & Dining Experience';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';

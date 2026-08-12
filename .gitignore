@@ -5,6 +5,7 @@
 
 # next.js
 /.next/
+# static export produced by `npm run build:pages`
 /out/
 next-env.d.ts
 

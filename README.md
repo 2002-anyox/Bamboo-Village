@@ -74,6 +74,8 @@ Other scripts:
 ```bash
 npm run build          # production build
 npm run start          # serve the production build
+npm run build:pages    # static export for GitHub Pages → out/
+npm run preview:pages  # serve out/ exactly as GitHub Pages will
 npm run typecheck      # TypeScript, no emit
 npm run check:images   # verifies every photo referenced in data/ actually loads
 ```
@@ -483,12 +485,48 @@ Set `NEXT_PUBLIC_SITE_URL` before deploying so canonical URLs are correct.
 
 ## Deploying
 
-Deploys anywhere Next.js runs. On Vercel: import the repository, set
-`NEXT_PUBLIC_WHATSAPP_NUMBER` and `NEXT_PUBLIC_SITE_URL` in project settings,
-deploy.
+### GitHub Pages — free, no signup
+
+A workflow at `.github/workflows/deploy-pages.yml` builds the site as a static
+export and publishes it on every push.
+
+**One-time setup:** in the repository go to **Settings → Pages → Build and
+deployment → Source** and choose **GitHub Actions**. Nothing else to configure.
+
+The site then goes live at:
+
+```
+https://<your-username>.github.io/Bamboo-Village/
+```
+
+Watch progress under the **Actions** tab. To enable one-tap WhatsApp sending on
+the published preview, add a repository variable named
+`NEXT_PUBLIC_WHATSAPP_NUMBER` under **Settings → Secrets and variables →
+Actions → Variables**.
+
+Everything works on Pages — cart, ordering, WhatsApp message generation, forms,
+gallery and lightbox all run in the browser. To check the export locally before
+pushing:
 
 ```bash
-npm run build && npm run start   # anywhere else, behind a reverse proxy
+npm run build:pages
+npm run preview:pages    # http://localhost:3200/Bamboo-Village/
+```
+
+> Pages serves from a `/Bamboo-Village/` sub-path, which the build bakes in via
+> `basePath`. If you rename the repository the workflow picks the new name up
+> automatically. On a custom domain, set `PAGES_BASE_PATH` to an empty string.
+
+### Vercel — best fit for Next.js
+
+Import the repository, set `NEXT_PUBLIC_WHATSAPP_NUMBER` and
+`NEXT_PUBLIC_SITE_URL` in project settings, deploy. No static-export
+constraints, and preview deployments per branch.
+
+### Anywhere else
+
+```bash
+npm run build && npm run start   # Node server, behind a reverse proxy
 ```
 
 ---

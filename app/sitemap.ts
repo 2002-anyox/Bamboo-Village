@@ -1,6 +1,9 @@
 import type { MetadataRoute } from 'next';
 import { restaurantConfig, navigation, secondaryNavigation } from '@/data/restaurant';
 
+/** Emitted as a file at build time — required for the static Pages export. */
+export const dynamic = 'force-static';
+
 /** Generated from the same navigation config that drives the site's menus. */
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
