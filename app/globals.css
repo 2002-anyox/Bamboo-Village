@@ -1,0 +1,512 @@
+@import 'tailwindcss';
+
+/* ===========================================================================
+   BAMBOO VILLAGE — DESIGN TOKENS
+   Change a colour here and it updates everywhere on the site.
+   =========================================================================== */
+
+@theme {
+  /* Brand palette ------------------------------------------------------- */
+  --color-forest: #0b2b20;
+  --color-bamboo: #1f5a3d;
+  --color-jade: #087f5b;
+  --color-gold: #d6a84f;
+  --color-champagne: #e8d3a3;
+  --color-ember: #c96835;
+  --color-charcoal: #101412;
+  --color-cream: #f5ebdd;
+
+  /* Derived surfaces ---------------------------------------------------- */
+  --color-ink: #070a09;
+  --color-surface: #0d1512;
+  --color-surface-raised: #13201a;
+
+  /* Typography ---------------------------------------------------------- */
+  --font-display: var(--font-playfair), 'Playfair Display', Georgia, serif;
+  --font-sans: var(--font-manrope), 'Manrope', ui-sans-serif, system-ui, sans-serif;
+
+  /* Motion -------------------------------------------------------------- */
+  --ease-village: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-village-in: cubic-bezier(0.65, 0, 0.35, 1);
+
+  /* Layout -------------------------------------------------------------- */
+  --spacing-gutter: clamp(1.25rem, 5vw, 5rem);
+}
+
+/* ===========================================================================
+   BASE
+   =========================================================================== */
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    border-color: color-mix(in oklab, var(--color-gold) 18%, transparent);
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+    scrollbar-gutter: stable;
+  }
+
+  /* Lenis drives scrolling on desktop; disable native smooth to avoid fighting. */
+  html.lenis,
+  html.lenis body {
+    height: auto;
+  }
+  html.lenis {
+    scroll-behavior: auto;
+  }
+  .lenis.lenis-smooth [data-lenis-prevent] {
+    overscroll-behavior: contain;
+  }
+  .lenis.lenis-stopped {
+    overflow: hidden;
+  }
+
+  body {
+    background-color: var(--color-ink);
+    color: var(--color-cream);
+    font-family: var(--font-sans);
+    font-feature-settings: 'kern', 'liga', 'cv11';
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  ::selection {
+    background: var(--color-gold);
+    color: var(--color-ink);
+  }
+
+  /* Focus ring — visible, on-brand, never removed. ---------------------- */
+  :focus-visible {
+    outline: 2px solid var(--color-gold);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  /* Scrollbar ----------------------------------------------------------- */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--color-ink);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: color-mix(in oklab, var(--color-bamboo) 70%, var(--color-ink));
+    border: 2px solid var(--color-ink);
+    border-radius: 999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-jade);
+  }
+
+  input,
+  textarea,
+  select {
+    font-family: inherit;
+    font-size: 1rem; /* prevents iOS zoom-on-focus */
+  }
+
+  /* Remove the number spinners from the guest count field. */
+  input[type='number']::-webkit-outer-spin-button,
+  input[type='number']::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  input[type='number'] {
+    -moz-appearance: textfield;
+  }
+
+  /* Date/time pickers on dark backgrounds. */
+  input[type='date']::-webkit-calendar-picker-indicator,
+  input[type='time']::-webkit-calendar-picker-indicator {
+    filter: invert(78%) sepia(38%) saturate(560%) hue-rotate(357deg) brightness(93%);
+    cursor: pointer;
+  }
+}
+
+/* ===========================================================================
+   COMPONENT UTILITIES
+   =========================================================================== */
+
+@layer components {
+  /* Page gutter — one rule, used by every section. */
+  .shell {
+    width: 100%;
+    margin-inline: auto;
+    max-width: 96rem;
+    padding-inline: var(--spacing-gutter);
+  }
+
+  .shell-wide {
+    width: 100%;
+    margin-inline: auto;
+    max-width: 120rem;
+    padding-inline: var(--spacing-gutter);
+  }
+
+  .section {
+    padding-block: clamp(4rem, 7.5vw, 7.5rem);
+  }
+
+  .section-tight {
+    padding-block: clamp(2.75rem, 5vw, 4.75rem);
+  }
+
+  /* Small uppercase label used above every section heading. */
+  .eyebrow {
+    font-family: var(--font-sans);
+    font-size: clamp(0.625rem, 0.75vw, 0.6875rem);
+    font-weight: 600;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--color-gold);
+  }
+
+  /* Editorial display sizes ------------------------------------------- */
+  /* Scales with viewport HEIGHT as well as width, so the three-line hero
+     headline plus its buttons and scroll cue always fit one screen —
+     including on short laptop displays. */
+  .display-hero {
+    font-size: clamp(3rem, min(11.5vw, 13vh), 10rem);
+    line-height: 0.88;
+    letter-spacing: -0.035em;
+  }
+
+  .display-xl {
+    font-size: clamp(2.5rem, 7vw, 6rem);
+    line-height: 0.94;
+    letter-spacing: -0.03em;
+  }
+
+  .display-lg {
+    font-size: clamp(2rem, 4.6vw, 3.75rem);
+    line-height: 1.02;
+    letter-spacing: -0.025em;
+  }
+
+  .display-md {
+    font-size: clamp(1.5rem, 2.6vw, 2.25rem);
+    line-height: 1.12;
+    letter-spacing: -0.02em;
+  }
+
+  .lede {
+    font-size: clamp(1rem, 1.35vw, 1.1875rem);
+    line-height: 1.7;
+    color: color-mix(in oklab, var(--color-cream) 72%, transparent);
+  }
+
+  /* Thin gold rule used to separate editorial blocks. */
+  .rule-gold {
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      color-mix(in oklab, var(--color-gold) 55%, transparent) 18%,
+      color-mix(in oklab, var(--color-gold) 55%, transparent) 82%,
+      transparent
+    );
+  }
+
+  /* Glass panel — used sparingly (nav, cart, lightbox chrome). */
+  .glass {
+    background: color-mix(in oklab, var(--color-ink) 72%, transparent);
+    backdrop-filter: blur(18px) saturate(140%);
+    -webkit-backdrop-filter: blur(18px) saturate(140%);
+  }
+
+  /* The dark vignette laid over hero photography. */
+  .cinema-veil {
+    background:
+      linear-gradient(
+        to top,
+        var(--color-ink) 0%,
+        color-mix(in oklab, var(--color-ink) 55%, transparent) 32%,
+        transparent 62%
+      ),
+      linear-gradient(
+        to right,
+        color-mix(in oklab, var(--color-ink) 78%, transparent) 0%,
+        transparent 55%
+      ),
+      radial-gradient(
+        120% 80% at 50% 20%,
+        transparent 30%,
+        color-mix(in oklab, var(--color-ink) 62%, transparent) 100%
+      );
+  }
+
+  /* Fine hairline used on cards and inputs. */
+  .hairline {
+    border: 1px solid color-mix(in oklab, var(--color-gold) 16%, transparent);
+  }
+
+  .hairline-strong {
+    border: 1px solid color-mix(in oklab, var(--color-gold) 34%, transparent);
+  }
+
+  /* Underline that draws in on hover — used across nav and text links. */
+  .link-underline {
+    position: relative;
+  }
+  .link-underline::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -0.25em;
+    height: 1px;
+    width: 100%;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.5s var(--ease-village);
+  }
+  .link-underline:hover::after,
+  .link-underline:focus-visible::after {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+
+  /* Hides content visually but keeps it for screen readers. */
+  .sr-only-focusable:not(:focus):not(:focus-within) {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+
+  /* Horizontal rails that stay swipeable on touch.
+     min-width/max-width are load-bearing: without them the rail's nowrap
+     content sets the min-content size of any grid or flex ancestor, which
+     pushes the whole page wider than the viewport instead of scrolling. */
+  .rail {
+    display: flex;
+    min-width: 0;
+    max-width: 100%;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+  }
+  .rail::-webkit-scrollbar {
+    display: none;
+  }
+  .rail > * {
+    scroll-snap-align: start;
+    flex: 0 0 auto;
+  }
+}
+
+/* ===========================================================================
+   TEXTURE — film grain laid over the whole document
+   =========================================================================== */
+
+.grain-overlay {
+  position: fixed;
+  inset: -100%;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 320 320' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  will-change: transform;
+  animation: grain-drift 700ms steps(3) infinite;
+}
+
+@keyframes grain-drift {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  33% {
+    transform: translate3d(-2%, 1.5%, 0);
+  }
+  66% {
+    transform: translate3d(1.5%, -1%, 0);
+  }
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+/* Soft moving light used behind dark sections. */
+@keyframes aurora {
+  0%,
+  100% {
+    transform: translate3d(-4%, 0, 0) scale(1);
+    opacity: 0.5;
+  }
+  50% {
+    transform: translate3d(4%, -3%, 0) scale(1.12);
+    opacity: 0.75;
+  }
+}
+
+.aurora {
+  animation: aurora 18s var(--ease-village) infinite;
+}
+
+/* The slow ambient drift on the hero's fallback photograph. */
+@keyframes ken-burns {
+  0% {
+    transform: scale(1.06) translate3d(0, 0, 0);
+  }
+  100% {
+    transform: scale(1.18) translate3d(-1.5%, -1.5%, 0);
+  }
+}
+
+.ken-burns {
+  animation: ken-burns 26s var(--ease-village) infinite alternate;
+}
+
+/* Liquid shimmer used on the drinks section. */
+@keyframes liquid-shift {
+  0%,
+  100% {
+    transform: translateY(0) scaleY(1);
+  }
+  50% {
+    transform: translateY(-6px) scaleY(1.06);
+  }
+}
+
+.liquid {
+  animation: liquid-shift 7s ease-in-out infinite;
+}
+
+/* Marquee for the moving brand strip. */
+@keyframes marquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.marquee-track {
+  animation: marquee 42s linear infinite;
+  will-change: transform;
+}
+
+/* Scroll cue in the hero. */
+@keyframes scroll-cue {
+  0% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  35% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+}
+
+.scroll-cue {
+  animation: scroll-cue 2.4s var(--ease-village) infinite;
+}
+
+/* Cart badge attention pulse. */
+@keyframes cart-pulse {
+  0% {
+    box-shadow: 0 0 0 0 color-mix(in oklab, var(--color-gold) 55%, transparent);
+  }
+  70% {
+    box-shadow: 0 0 0 12px transparent;
+  }
+  100% {
+    box-shadow: 0 0 0 0 transparent;
+  }
+}
+
+.cart-pulse {
+  animation: cart-pulse 0.9s var(--ease-village);
+}
+
+/* ===========================================================================
+   REDUCED MOTION
+   Everything decorative stops; nothing becomes unusable.
+   =========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .grain-overlay,
+  .ken-burns,
+  .aurora,
+  .marquee-track,
+  .liquid,
+  .scroll-cue {
+    animation: none !important;
+  }
+}
+
+/* ===========================================================================
+   FLOATING CHROME — stays out of the way of overlays and the mobile order bar
+   =========================================================================== */
+
+.floating-actions {
+  transition:
+    opacity 0.3s var(--ease-village),
+    transform 0.3s var(--ease-village),
+    bottom 0.35s var(--ease-village);
+}
+
+/* A fullscreen overlay is open — the floating buttons would sit on top of it. */
+body[data-overlay='true'] .floating-actions {
+  opacity: 0;
+  transform: scale(0.85);
+  pointer-events: none;
+}
+
+/* The mobile order bar occupies the bottom edge, so lift the buttons clear. */
+@media (max-width: 639px) {
+  body[data-orderbar='true'] .floating-actions {
+    bottom: 6.5rem;
+  }
+}
+
+/* Hide the custom cursor entirely on touch / coarse pointers. */
+@media (pointer: coarse), (hover: none) {
+  .cursor-ring {
+    display: none !important;
+  }
+}
