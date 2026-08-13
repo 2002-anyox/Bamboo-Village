@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { cn } from '@/lib/utils';
 
 /**
@@ -53,12 +53,39 @@ export function SmartImage({
 }: SmartImageProps) {
   const [loaded, setLoaded] = useState(false);
   const [failed, setFailed] = useState(false);
+  const imgRef = useRef<HTMLImageElement>(null);
 
   const remote = isUnsplash(src);
   const resolvedSrc = remote ? unsplashUrl(src, 1440) : src;
   const srcSet = remote
     ? WIDTHS.map((width) => `${unsplashUrl(src, width)} ${width}w`).join(', ')
     : undefined;
+
+  /**
+   * Catch images that finished loading before React attached `onLoad`.
+   *
+   * On a first page load the browser starts fetching from the server-rendered
+   * HTML immediately, and often finishes before hydration runs — so the load
+   * event fires with no listener attached, `loaded` stays false, and the
+   * photograph sits at opacity 0 forever. It only appeared after navigating
+   * away and back, because on a client-side render React creates the element
+   * with the handler already on it.
+   *
+   * `complete` is also true for images that failed, where naturalWidth is 0 —
+   * that case routes to the fallback panel instead.
+   */
+  useEffect(() => {
+    // Clear first, so a changed src fades in rather than inheriting the
+    // previous photograph's state, then re-detect against the new element.
+    setLoaded(false);
+    setFailed(false);
+
+    const image = imgRef.current;
+    if (!image?.complete) return;
+
+    if (image.naturalWidth > 0) setLoaded(true);
+    else setFailed(true);
+  }, [resolvedSrc]);
 
   return (
     <span className={cn('relative block h-full w-full overflow-hidden', className)}>
@@ -75,6 +102,7 @@ export function SmartImage({
         <ImageFallback label={alt} />
       ) : (
         <img
+          ref={imgRef}
           src={resolvedSrc}
           srcSet={srcSet}
           sizes={sizes}
