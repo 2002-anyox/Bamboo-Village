@@ -478,8 +478,10 @@ export const menuItems: MenuItem[] = [
     name: 'Champagne — Bottle',
     description: 'Brut NV. For the tables that have something to celebrate.',
     price: 420000,
-    image: u('1592483648224-61bf8287bfd4'),
-    alt: 'Champagne bottle and coupes set on a bar',
+    // The previous photo 404'd. This one is verified; swap it for a real
+    // bottle shot when Bamboo Village's own photography arrives.
+    image: u('1533174072545-7a4b6ad7a6c3'),
+    alt: 'A celebratory table of drinks shot from above',
     tags: ['signature'],
   },
 

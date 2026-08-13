@@ -25,6 +25,14 @@ const PUBLIC_DIR = join(ROOT, 'public');
 const CONCURRENCY = 6;
 const TIMEOUT_MS = 15000;
 
+/**
+ * Removes comments so example paths written in documentation — like
+ * "e.g. '/images/dishes/nyama.jpg'" — are not mistaken for real references.
+ * Strings are left intact; only comment bodies are blanked.
+ */
+const stripComments = (source) =>
+  source.replace(/\/\*[\s\S]*?\*\//g, '').replace(/(^|[^:])\/\/[^\n]*/g, '$1');
+
 /** Pulls every image reference out of the data files. */
 async function collectReferences() {
   const files = (await readdir(DATA_DIR)).filter((name) => name.endsWith('.ts'));
@@ -36,7 +44,7 @@ async function collectReferences() {
   };
 
   for (const file of files) {
-    const source = await readFile(join(DATA_DIR, file), 'utf8');
+    const source = stripComments(await readFile(join(DATA_DIR, file), 'utf8'));
 
     // unsplashPhoto('1414235077428-338989a2e8c0')  /  u('…')
     for (const match of source.matchAll(
