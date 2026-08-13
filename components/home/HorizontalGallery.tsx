@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
 import { SmartImage } from '@/components/ui/SmartImage';
 import { Button } from '@/components/ui/Button';
@@ -77,29 +77,67 @@ function PinnedRail({
   onOpen: (index: number) => void;
 }) {
   const ref = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLUListElement>(null);
+  const [travel, setTravel] = useState(0);
+
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ['start start', 'end end'],
   });
 
-  // Travel just far enough to bring the last frame flush to the right edge.
-  const rawX = useTransform(scrollYProgress, [0, 1], ['2vw', '-232vw']);
+  /**
+   * Measure how far the track actually has to move, rather than guessing.
+   *
+   * The distance was hard-coded in viewport units, but the frames are sized in
+   * vw while the gaps between them are in px — so the two only agreed at one
+   * screen width. Everywhere else the track stopped short and the last frames
+   * could never be scrolled to at all.
+   */
+  useEffect(() => {
+    const measure = () => {
+      const track = trackRef.current;
+      if (!track) return;
+      setTravel(Math.max(0, track.scrollWidth - window.innerWidth));
+    };
+
+    measure();
+    window.addEventListener('resize', measure);
+
+    // Frame widths depend on viewport height too (they are sized in vh), and
+    // fonts/images settle after first paint.
+    const settle = setTimeout(measure, 400);
+
+    return () => {
+      window.removeEventListener('resize', measure);
+      clearTimeout(settle);
+    };
+  }, []);
+
+  const rawX = useTransform(scrollYProgress, [0, 1], [0, -travel]);
   const x = useSpring(rawX, { stiffness: 90, damping: 26, mass: 0.6 });
 
   return (
     <div ref={ref} className="relative h-[420vh]">
       <div className="sticky top-0 flex h-screen items-center overflow-hidden">
-        <motion.ul style={{ x }} className="flex gap-6 will-change-transform">
+        <motion.ul
+          ref={trackRef}
+          style={{ x }}
+          className="flex gap-6 px-(--spacing-gutter) will-change-transform"
+        >
           {images.map((image, index) => (
             <li
               key={image.id}
+              // Sizes vary to give the rail rhythm, but every frame stays
+              // centred on one horizontal axis. Mixing self-start and self-end
+              // as well gave three different top edges, which reads as
+              // misalignment rather than as rhythm.
               className={cn(
                 'relative shrink-0',
                 index % 3 === 0
-                  ? 'h-[62vh] w-[34vw]'
+                  ? 'h-[66vh] w-[33vw]'
                   : index % 3 === 1
-                    ? 'h-[46vh] w-[24vw] self-end'
-                    : 'h-[54vh] w-[28vw] self-start',
+                    ? 'h-[52vh] w-[25vw]'
+                    : 'h-[58vh] w-[28vw]',
               )}
             >
               <GalleryFrame image={image} index={index} onOpen={onOpen} />

@@ -9,14 +9,15 @@ const THREADS = ['Dining', 'Cocktails', 'Music', 'Friends', 'Nightlife', 'Events
 
 export function ExperienceSection() {
   return (
-    <section
-      className="section relative overflow-hidden bg-ink"
-      aria-labelledby="experience-heading"
-    >
+    // No overflow-hidden here: an ancestor with a clipping overflow silently
+    // disables `position: sticky`, which left the copy column scrolling away
+    // and the whole lower half of the section empty. The decorative plate
+    // below does its own clipping instead.
+    <section className="section relative bg-ink" aria-labelledby="experience-heading">
       {/* Full-bleed atmospheric plate, drifting behind the collage */}
       <ParallaxLayer
         intensity={0.5}
-        className="pointer-events-none absolute inset-x-0 top-0 h-[60vh] opacity-20"
+        className="pointer-events-none absolute inset-x-0 top-0 h-[60vh] overflow-hidden opacity-20"
       >
         <div className="relative h-full w-full">
           <ImageReveal
