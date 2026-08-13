@@ -33,3 +33,6 @@ yarn-error.log*
 # editor
 .vscode/
 .idea/
+
+# disposable image-review output (npm run contact-sheet)
+/contact-sheet/

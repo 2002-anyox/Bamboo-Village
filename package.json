@@ -2,7 +2,7 @@
   "name": "bamboo-village",
   "version": "1.0.0",
   "private": true,
-  "description": "Bamboo Village — Restaurant, Bar & Dining Experience",
+  "description": "Bamboo Village \u2014 Restaurant, Bar & Dining Experience",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -10,7 +10,8 @@
     "build:pages": "node scripts/build-pages.mjs",
     "preview:pages": "node scripts/preview-pages.mjs",
     "typecheck": "tsc --noEmit",
-    "check:images": "node scripts/check-images.mjs"
+    "check:images": "node scripts/check-images.mjs",
+    "contact-sheet": "node scripts/build-contact-sheet.mjs"
   },
   "dependencies": {
     "framer-motion": "^11.15.0",
