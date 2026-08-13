@@ -1,10 +1,32 @@
 'use client';
 
 import { ImageReveal } from '@/components/ui/ImageReveal';
-import { Reveal, TextReveal } from '@/components/ui/Reveal';
+import { Reveal } from '@/components/ui/Reveal';
+import { SectionHeading } from '@/components/ui/SectionHeading';
 import { Button } from '@/components/ui/Button';
 import { introImages } from '@/data/images';
 import { villageStats } from '@/data/testimonials';
+
+/**
+ * The brand introduction — the first section below the hero.
+ *
+ * Structured exactly like every other section on the site: a SectionHeading
+ * (eyebrow, display title, action) across the full width, then a content grid
+ * beneath it. It previously rolled its own layout and vertically centred the
+ * copy against a much taller photograph, which left a large hole under the
+ * headline and meant nothing shared an edge with anything else.
+ *
+ * The grid is `items-start` on purpose: the copy and the photograph begin on
+ * the same line, which is what makes the section read as composed rather than
+ * as two things that happen to sit near each other.
+ */
+
+/** The three spaces, which is the idea the whole brand rests on. */
+const SPACES = [
+  { name: 'The Kitchen', line: 'Built around live fire and hardwood coals.' },
+  { name: 'The Bar', line: 'Every pour measured, tasted, and adjusted.' },
+  { name: 'The Terrace', line: 'Which becomes something else after dark.' },
+];
 
 export function BrandIntro() {
   return (
@@ -16,45 +38,51 @@ export function BrandIntro() {
       />
 
       <div className="shell relative">
-        {/* Full-width headline — the line breaks land where they should. */}
-        <Reveal>
-          <span className="eyebrow flex items-center gap-4">
-            <span className="h-px w-8 bg-gold/60" aria-hidden="true" />
-            Welcome to the village
-          </span>
-        </Reveal>
-
-        <TextReveal
-          text={'Not just a restaurant.\nA village of experiences.'}
-          className="display-xl mt-7 mb-16 font-display text-cream lg:mb-20"
+        <SectionHeading
+          eyebrow="Welcome to the village"
+          title={'Not just a restaurant.\nA village of experiences.'}
+          action={
+            <Button href="/about" variant="outline" withArrow magnetic>
+              Our story
+            </Button>
+          }
         />
 
-        <div className="grid items-center gap-14 lg:grid-cols-12 lg:gap-16">
+        <div className="mt-14 grid items-start gap-12 lg:mt-16 lg:grid-cols-12 lg:gap-16">
           {/* Copy */}
-          <div className="lg:col-span-5 lg:pr-4">
-            <Reveal delay={0.15}>
-              <div className="flex flex-col gap-5 text-base leading-relaxed text-cream/65">
-                <p>
-                  Bamboo Village began with a simple idea: build somewhere that
-                  behaves differently depending on why you came. Somewhere you can
-                  take a first date, close a deal over lunch, and still find yourself
-                  on the floor at one in the morning.
-                </p>
-                <p>
-                  Three spaces, one address. A kitchen built around live fire. A bar
-                  that treats a mocktail with the same seriousness as a twenty-year
-                  whisky. And a terrace that turns into something else entirely once
-                  the sun drops.
-                </p>
-              </div>
+          <div className="lg:col-span-5">
+            <Reveal delay={0.1}>
+              <p className="lede">
+                Bamboo Village began with a simple idea: build somewhere that behaves
+                differently depending on why you came. Somewhere you can take a first
+                date, close a deal over lunch, and still find yourself on the floor at
+                one in the morning.
+              </p>
             </Reveal>
 
-            <Reveal delay={0.25}>
-              <div className="mt-10">
-                <Button href="/about" variant="outline" withArrow magnetic>
-                  Our story
-                </Button>
-              </div>
+            <Reveal delay={0.18}>
+              <dl className="mt-10 flex flex-col">
+                {SPACES.map((space) => (
+                  <div
+                    key={space.name}
+                    className="grid grid-cols-[9rem_1fr] gap-4 border-t border-gold/15 py-4"
+                  >
+                    <dt className="font-sans text-[0.6875rem] font-semibold tracking-[0.2em] text-gold uppercase">
+                      {space.name}
+                    </dt>
+                    <dd className="text-sm leading-relaxed text-cream/60">
+                      {space.line}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+            </Reveal>
+
+            <Reveal delay={0.26}>
+              <p className="mt-8 text-sm leading-relaxed text-cream/45">
+                Three spaces, one address — and no obligation to visit them in any
+                particular order.
+              </p>
             </Reveal>
           </div>
 
@@ -66,12 +94,14 @@ export function BrandIntro() {
                 alt={introImages.primary.alt}
                 focal={introImages.primary.focal}
                 sizes="(max-width: 1024px) 100vw, 58vw"
-                className="aspect-4/5 w-full sm:aspect-3/2 lg:aspect-4/3"
+                className="aspect-4/5 w-full sm:aspect-3/2"
               />
 
-              {/* Offset secondary plate — sits outside the frame on the left,
-                  clear of the copy column on large screens. */}
-              <div className="absolute bottom-6 -left-5 hidden w-40 sm:block lg:bottom-10 lg:-left-12 lg:w-48">
+              {/* Offset accent plate. Portrait, to suit an upright subject; it
+                  sits inside the main photograph's vertical bounds and
+                  overlaps only its left edge, so the layering reads as
+                  deliberate rather than as something slipping off the corner. */}
+              <div className="absolute bottom-6 -left-5 hidden w-40 sm:block lg:bottom-10 lg:-left-10 lg:w-48">
                 <ImageReveal
                   src={introImages.secondary.src}
                   alt={introImages.secondary.alt}
@@ -79,26 +109,21 @@ export function BrandIntro() {
                   sizes="200px"
                   parallax={1.2}
                   delay={0.2}
-                  // Portrait, to suit an upright subject. It sits inside the
-                  // main photograph's vertical bounds and overlaps only its
-                  // left edge, so it reads as a deliberate second plate rather
-                  // than something hanging off the corner. The ring lifts it
-                  // off the photograph behind it.
                   className="aspect-3/4 w-full border border-gold/25 shadow-[0_18px_50px_rgba(0,0,0,0.55)]"
                 />
               </div>
 
-              {/* Gold corner rules */}
+              {/* Gold corner rule, anchored to the frame it belongs to. */}
               <span
                 aria-hidden="true"
-                className="absolute -top-4 -right-4 hidden h-24 w-24 border-t border-r border-gold/45 lg:block"
+                className="pointer-events-none absolute -top-4 -right-4 hidden h-24 w-24 border-t border-r border-gold/45 lg:block"
               />
             </div>
           </div>
         </div>
 
         {/* Statistics band */}
-        <div className="rule-gold mt-28 mb-12 lg:mt-32" />
+        <div className="rule-gold mt-20 mb-12 lg:mt-24" />
 
         <dl className="grid grid-cols-2 gap-x-6 gap-y-12 lg:grid-cols-4">
           {villageStats.map((stat, index) => (
