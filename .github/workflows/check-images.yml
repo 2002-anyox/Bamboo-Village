@@ -1,0 +1,40 @@
+name: Check images
+
+# Fetches every photograph referenced from data/ and reports any that fail.
+# Runs on push and can be triggered by hand from the Actions tab.
+#
+# Worth keeping after launch: image URLs rot, and this turns "some pictures
+# look wrong" into an exact list of what broke.
+
+on:
+  push:
+    branches:
+      - main
+      - 'claude/**'
+  workflow_dispatch:
+
+jobs:
+  check:
+    name: Verify every image resolves
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # continue-on-error so the full report is always printed, even when
+      # some images fail — the log is the point of this job.
+      - name: Check images
+        id: check
+        continue-on-error: true
+        run: npm run check:images
+
+      - name: Summarise
+        run: |
+          if [ "${{ steps.check.outcome }}" = "success" ]; then
+            echo "✓ Every image resolved." >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "✗ Some images failed — see the 'Check images' step log." >> "$GITHUB_STEP_SUMMARY"
+          fi
