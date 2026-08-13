@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactNode } from 'react';
+import { Fragment, type ReactNode } from 'react';
 import { motion, type Variants } from 'framer-motion';
 import { cn } from '@/lib/utils';
 
@@ -96,8 +96,6 @@ export function TextReveal({
     },
   };
 
-  let wordIndex = 0;
-
   return (
     <motion.div
       initial="hidden"
@@ -106,22 +104,29 @@ export function TextReveal({
       variants={container}
     >
       <Tag className={className}>
-        {lines.map((line, lineIndex) => (
-          <span key={lineIndex} className="block overflow-hidden pb-[0.08em]">
-            {line.split(' ').map((w) => {
-              wordIndex += 1;
-              return (
-                <motion.span
-                  key={`${lineIndex}-${wordIndex}`}
-                  variants={word}
-                  className={cn('inline-block', wordClassName)}
-                >
-                  {w}{' '}
-                </motion.span>
-              );
-            })}
-          </span>
-        ))}
+        {lines.map((line, lineIndex) => {
+          const words = line.split(' ').filter(Boolean);
+
+          return (
+            <span key={lineIndex} className="block overflow-hidden pb-[0.08em]">
+              {words.map((w, index) => (
+                <Fragment key={`${lineIndex}-${index}-${w}`}>
+                  <motion.span
+                    variants={word}
+                    className={cn('inline-block', wordClassName)}
+                  >
+                    {w}
+                  </motion.span>
+                  {/* The separating space MUST live outside the inline-block.
+                      A trailing space inside one is stripped by CSS white-space
+                      processing, which runs the words together — and it also
+                      removes the only place the line is allowed to wrap. */}
+                  {index < words.length - 1 ? ' ' : null}
+                </Fragment>
+              ))}
+            </span>
+          );
+        })}
       </Tag>
     </motion.div>
   );
