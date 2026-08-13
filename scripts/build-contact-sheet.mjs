@@ -28,7 +28,7 @@ const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const DATA_DIR = join(ROOT, 'data');
 const OUT_DIR = join(ROOT, 'contact-sheet');
 const THUMB_W = 220;
-const PER_SHEET = 24;
+const PER_SHEET = 15;
 
 const stripComments = (s) =>
   s.replace(/\/\*[\s\S]*?\*\//g, '').replace(/(^|[^:])\/\/[^\n]*/g, '$1');
@@ -42,22 +42,31 @@ async function collect() {
   for (const file of files.sort()) {
     const src = stripComments(await readFile(join(DATA_DIR, file), 'utf8'));
 
-    // Pair each photo id with the nearest following alt//caption string, which
-    // is how these objects are written throughout data/.
+    // Label each photo with the field that identifies it.
+    //
+    // Direction matters and differs by file: menu items write `name` BEFORE
+    // `image`, while images/gallery/events write `alt` AFTER `src`. Looking
+    // only forwards labels every menu photo with the *next* dish's name,
+    // which silently misattributes the whole sheet — the thing this tool
+    // exists to prevent.
     const re = /\b(?:unsplashPhoto|u)\(\s*['"]([\w-]+)['"]\s*\)/g;
     let m;
     while ((m = re.exec(src))) {
       const id = m[1];
-      const after = src.slice(m.index, m.index + 400);
-      const altMatch = after.match(/alt:\s*['"]([^'"]+)['"]/);
-      const nameMatch = after.match(/name:\s*['"]([^'"]+)['"]/);
+
+      const before = src.slice(Math.max(0, m.index - 320), m.index);
+      const namesBefore = [...before.matchAll(/name:\s*['"]([^'"]+)['"]/g)];
+      const after = src.slice(m.index, m.index + 320);
+      const altAfter = after.match(/alt:\s*['"]([^'"]+)['"]/);
+
       const key = `${file}:${id}`;
       if (seen.has(key)) continue;
       seen.add(key);
       entries.push({
         id,
         file,
-        label: nameMatch?.[1] ?? altMatch?.[1] ?? '(no label found)',
+        label:
+          namesBefore.at(-1)?.[1] ?? altAfter?.[1] ?? '(no label found)',
       });
     }
   }
@@ -115,11 +124,13 @@ async function main() {
       await run('montage', [
         ...batch,
         '-label', '%f',
-        '-tile', '6x',
-        '-geometry', `${THUMB_W}x160+6+6`,
+        '-tile', '5x',
+        '-geometry', `${THUMB_W}x180+8+8`,
         '-background', '#101412',
         '-fill', '#E8D3A3',
-        '-pointsize', '13',
+        // Large enough that the label under each frame is actually readable,
+        // which is the difference between reviewing and guessing.
+        '-pointsize', '18',
         sheet,
       ]);
       console.log(`\nWrote ${sheet}`);
