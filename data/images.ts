@@ -90,8 +90,10 @@ export const introImages = {
     focal: '50% 40%',
   },
   secondary: {
-    src: u('1470337458703-46ad1756a187'),
-    alt: 'A cocktail finished at the pass',
+    // A tight, warm close-up: this sits in a small square frame, so it needs
+    // a subject that survives a hard crop. Wide bar shots do not.
+    src: u('1601050690597-df0568f70950'),
+    alt: 'Samosas, fresh from the fryer',
   },
 } satisfies Record<string, ImageAsset>;
 

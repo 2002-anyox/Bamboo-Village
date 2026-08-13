@@ -71,14 +71,16 @@ export function BrandIntro() {
 
               {/* Offset secondary plate — sits outside the frame on the left,
                   clear of the copy column on large screens. */}
-              <div className="absolute -bottom-12 -left-6 hidden w-40 sm:block lg:-bottom-16 lg:-left-16 lg:w-44">
+              <div className="absolute -bottom-10 -left-6 hidden w-44 sm:block lg:-bottom-14 lg:-left-16 lg:w-52">
                 <ImageReveal
                   src={introImages.secondary.src}
                   alt={introImages.secondary.alt}
-                  sizes="200px"
+                  sizes="220px"
                   parallax={1.6}
                   delay={0.2}
-                  className="aspect-3/4 w-full border border-gold/20"
+                  // Square, not portrait: almost all source photography is
+                  // landscape, and a tall frame crops the subject to pieces.
+                  className="aspect-square w-full border border-gold/20"
                 />
               </div>
 
