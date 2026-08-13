@@ -26,6 +26,10 @@ jobs:
         with:
           node-version: '20'
 
+      # ImageMagick is no longer preinstalled on the ubuntu runner images.
+      - name: Install ImageMagick
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq imagemagick
+
       - name: Build the sheet
         run: npm run contact-sheet
 

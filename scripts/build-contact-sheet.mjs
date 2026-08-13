@@ -67,6 +67,9 @@ async function collect() {
 const slug = (s) =>
   s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 34);
 
+/** Short prefix per source file, so sheets group by where the photo is used. */
+const groupOf = (file) => file.replace(/\.ts$/, '');
+
 async function main() {
   await rm(OUT_DIR, { recursive: true, force: true });
   await mkdir(join(OUT_DIR, 'thumbs'), { recursive: true });
@@ -75,18 +78,24 @@ async function main() {
   console.log(`Downloading ${entries.length} thumbnails…\n`);
 
   const key = [];
+  const byGroup = new Map();
   let index = 0;
 
   for (const entry of entries) {
     index += 1;
-    const n = String(index).padStart(2, '0');
+    // Three digits: two breaks lexical sort as soon as there are 100+ photos.
+    const n = String(index).padStart(3, '0');
+    const group = groupOf(entry.file);
     const url = `https://images.unsplash.com/photo-${entry.id}?auto=format&fit=crop&q=60&w=${THUMB_W}`;
-    const target = join(OUT_DIR, 'thumbs', `${n}_${slug(entry.label)}.jpg`);
+    const name = `${n}_${slug(entry.label)}.jpg`;
+    const target = join(OUT_DIR, 'thumbs', name);
 
     try {
       const response = await fetch(url);
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       await writeFile(target, Buffer.from(await response.arrayBuffer()));
+      if (!byGroup.has(group)) byGroup.set(group, []);
+      byGroup.get(group).push(target);
       key.push(`${n}  ${entry.label}  [${entry.file} · ${entry.id}]`);
     } catch (error) {
       key.push(`${n}  DOWNLOAD FAILED (${error.message})  [${entry.file} · ${entry.id}]`);
@@ -96,22 +105,25 @@ async function main() {
   await writeFile(join(OUT_DIR, 'KEY.txt'), key.join('\n') + '\n');
   console.log(key.join('\n'));
 
-  // Assemble into labelled sheets, small enough to read in one screen each.
-  const thumbs = (await readdir(join(OUT_DIR, 'thumbs'))).sort();
-  for (let i = 0; i < thumbs.length; i += PER_SHEET) {
-    const batch = thumbs.slice(i, i + PER_SHEET).map((f) => join(OUT_DIR, 'thumbs', f));
-    const sheet = join(OUT_DIR, `sheet-${Math.floor(i / PER_SHEET) + 1}.png`);
-    await run('montage', [
-      ...batch,
-      '-label', '%f',
-      '-tile', '6x',
-      '-geometry', `${THUMB_W}x160+6+6`,
-      '-background', '#101412',
-      '-fill', '#E8D3A3',
-      '-pointsize', '13',
-      sheet,
-    ]);
-    console.log(`\nWrote ${sheet}`);
+  // One set of sheets per source file, so the layout photography in images.ts
+  // can be reviewed without wading through every menu thumbnail.
+  for (const [group, files] of byGroup) {
+    for (let i = 0; i < files.length; i += PER_SHEET) {
+      const batch = files.slice(i, i + PER_SHEET);
+      const part = files.length > PER_SHEET ? `-${Math.floor(i / PER_SHEET) + 1}` : '';
+      const sheet = join(OUT_DIR, `sheet-${group}${part}.png`);
+      await run('montage', [
+        ...batch,
+        '-label', '%f',
+        '-tile', '6x',
+        '-geometry', `${THUMB_W}x160+6+6`,
+        '-background', '#101412',
+        '-fill', '#E8D3A3',
+        '-pointsize', '13',
+        sheet,
+      ]);
+      console.log(`\nWrote ${sheet}`);
+    }
   }
 }
 
