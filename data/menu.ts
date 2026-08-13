@@ -302,7 +302,7 @@ export const menuItems: MenuItem[] = [
     description:
       'For two. Chicken, beef suya, goat ribs, prawns, plantain and three sauces.',
     price: 145000,
-    image: u('1541014741259-de529411b96a'),
+    image: u('1504674900247-0877df9cc836'),
     alt: 'Large mixed grill platter loaded with meats and sides',
     featured: true,
   },
@@ -480,8 +480,8 @@ export const menuItems: MenuItem[] = [
     price: 420000,
     // The previous photo 404'd. This one is verified; swap it for a real
     // bottle shot when Bamboo Village's own photography arrives.
-    image: u('1533174072545-7a4b6ad7a6c3'),
-    alt: 'A celebratory table of drinks shot from above',
+    image: u('1510812431401-41d2bd2722f3'),
+    alt: 'Glasses raised in celebration',
     tags: ['signature'],
   },
 
@@ -492,8 +492,8 @@ export const menuItems: MenuItem[] = [
     name: 'Single Malt Whisky',
     description: '12 year. Neat, over ice, or with a splash of still water.',
     price: 38000,
-    image: u('1569529465841-dfecdab7503b'),
-    alt: 'Whisky poured neat into a heavy tumbler',
+    image: u('1470337458703-46ad1756a187'),
+    alt: 'A measure poured neat over ice',
   },
   {
     id: 'sp-aged-rum',

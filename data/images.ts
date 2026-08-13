@@ -86,12 +86,12 @@ export const heroVideo = {
 export const introImages = {
   primary: {
     src: u('1517248135467-4c7edcad34c4'),
-    alt: 'Guests sharing plates across a candlelit table',
+    alt: 'The dining room set for evening service',
     focal: '50% 40%',
   },
   secondary: {
-    src: u('1526397751294-331021109fbd'),
-    alt: 'Bamboo stems filtering warm afternoon light',
+    src: u('1470337458703-46ad1756a187'),
+    alt: 'A cocktail finished at the pass',
   },
 } satisfies Record<string, ImageAsset>;
 
@@ -140,8 +140,8 @@ export const drinkImages: ImageAsset[] = [
     alt: 'Red wine poured into a wide-bowled glass',
   },
   {
-    src: u('1569529465841-dfecdab7503b'),
-    alt: 'Aged spirits lined along the back bar shelf',
+    src: u('1543007630-9710e4a00a20'),
+    alt: 'The back bar under warm light',
   },
   {
     src: u('1621263764928-df1444c5e859'),
@@ -167,17 +167,17 @@ export const barImages = {
 
 export const experienceImages: ImageAsset[] = [
   {
-    src: u('1530103862676-de8c9debad1d'),
+    src: u('1519671482749-fd09be7ccebf'),
     alt: 'Friends raising glasses across a busy table',
     focal: '50% 35%',
   },
   {
     src: u('1493225457124-a3eb161ffa5f'),
-    alt: 'Live band performing to a full room',
+    alt: 'A performer lit through stage smoke',
   },
   {
-    src: u('1559339352-11d035aa65de'),
-    alt: 'Bar counter crowded with guests late in the evening',
+    src: u('1574096079513-d8259312b785'),
+    alt: 'The bar late in the evening',
   },
   {
     src: u('1470229722913-7c0e2dbbafd3'),
@@ -192,8 +192,8 @@ export const experienceImages: ImageAsset[] = [
 export const venueImages: ImageAsset[] = [
   { src: u('1552566626-52f8b828add9'), alt: 'Dining room dressed for service before doors open' },
   { src: u('1517248135467-4c7edcad34c4'), alt: 'Terrace seating beneath strung festoon lighting' },
-  { src: u('1533105079780-92b9be482077'), alt: 'Bamboo screen detail catching the late sun' },
-  { src: u('1470337458703-46ad1756a187'), alt: 'Marble tabletop styled with brass and greenery' },
+  { src: u('1559329007-40df8a9345d8'), alt: 'The room seen from above, mid-service' },
+  { src: u('1514933651103-005eec06c04b'), alt: 'The bar, between services' },
 ];
 
 // ---------------------------------------------------------------------------
@@ -202,7 +202,7 @@ export const venueImages: ImageAsset[] = [
 
 export const peopleImages: ImageAsset[] = [
   { src: u('1577219491135-ce391730fb2c'), alt: 'Head chef plating in the pass' },
-  { src: u('1583394838336-acd977736f90'), alt: 'Kitchen team working the grill section' },
+  { src: u('1510812431401-41d2bd2722f3'), alt: 'Guests mid-toast at the centre table' },
   { src: u('1559329007-40df8a9345d8'), alt: 'Guests toasting at the centre table' },
 ];
 
@@ -212,13 +212,13 @@ export const peopleImages: ImageAsset[] = [
 
 export const socialImages: ImageAsset[] = [
   { src: u('1544145945-f90425340c7e'), alt: 'Cocktails lined up along the pass' },
-  { src: u('1541014741259-de529411b96a'), alt: 'Skewers turning over open flame' },
-  { src: u('1519671482749-fd09be7ccebf'), alt: 'Confetti falling across the dance floor' },
-  { src: u('1574096079513-d8259312b785'), alt: 'Citrus-forward highball in golden light' },
+  { src: u('1555939594-58d7cb561ad1'), alt: 'Skewers turning over open flame' },
+  { src: u('1519671482749-fd09be7ccebf'), alt: 'Friends raising a toast' },
+  { src: u('1574096079513-d8259312b785'), alt: 'The bar late in the evening' },
   { src: u('1551782450-a2132b4ba21d'), alt: 'Village burger stacked and ready to serve' },
-  { src: u('1543007630-9710e4a00a20'), alt: 'DJ working the booth on a Friday night' },
+  { src: u('1543007630-9710e4a00a20'), alt: 'The bar lit up on a Friday night' },
   { src: u('1510812431401-41d2bd2722f3'), alt: 'Wine glasses caught mid-toast' },
-  { src: u('1533174072545-7a4b6ad7a6c3'), alt: 'Table of drinks shot from above' },
+  { src: u('1533174072545-7a4b6ad7a6c3'), alt: 'Confetti over the dance floor' },
   { src: u('1488477181946-6428a0291777'), alt: 'Dessert plated with berries and cream' },
 ];
 
