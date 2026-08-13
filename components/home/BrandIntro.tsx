@@ -71,16 +71,20 @@ export function BrandIntro() {
 
               {/* Offset secondary plate — sits outside the frame on the left,
                   clear of the copy column on large screens. */}
-              <div className="absolute -bottom-10 -left-6 hidden w-44 sm:block lg:-bottom-14 lg:-left-16 lg:w-52">
+              <div className="absolute bottom-6 -left-5 hidden w-40 sm:block lg:bottom-10 lg:-left-12 lg:w-48">
                 <ImageReveal
                   src={introImages.secondary.src}
                   alt={introImages.secondary.alt}
-                  sizes="220px"
-                  parallax={1.6}
+                  focal={introImages.secondary.focal}
+                  sizes="200px"
+                  parallax={1.2}
                   delay={0.2}
-                  // Square, not portrait: almost all source photography is
-                  // landscape, and a tall frame crops the subject to pieces.
-                  className="aspect-square w-full border border-gold/20"
+                  // Portrait, to suit an upright subject. It sits inside the
+                  // main photograph's vertical bounds and overlaps only its
+                  // left edge, so it reads as a deliberate second plate rather
+                  // than something hanging off the corner. The ring lifts it
+                  // off the photograph behind it.
+                  className="aspect-3/4 w-full border border-gold/25 shadow-[0_18px_50px_rgba(0,0,0,0.55)]"
                 />
               </div>
 

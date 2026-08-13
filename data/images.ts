@@ -90,10 +90,11 @@ export const introImages = {
     focal: '50% 40%',
   },
   secondary: {
-    // A tight, warm close-up: this sits in a small square frame, so it needs
-    // a subject that survives a hard crop. Wide bar shots do not.
-    src: u('1601050690597-df0568f70950'),
-    alt: 'Samosas, fresh from the fryer',
+    src: u('1526397751294-331021109fbd'),
+    // Described as what it is. The frame beside it is portrait and sized to
+    // suit an upright subject like this one.
+    alt: 'A bonsai catching the afternoon light',
+    focal: '50% 45%',
   },
 } satisfies Record<string, ImageAsset>;
 
