@@ -327,47 +327,50 @@
    TEXTURE — film grain laid over the whole document
    =========================================================================== */
 
+/**
+ * Film grain: a still, very fine texture — not an animation.
+ *
+ * This used to jitter on a 700ms step loop, which read as grey static
+ * crawling over the page rather than as photographic grain. Real film grain
+ * on a printed page does not move, and the movement was the part that looked
+ * cheap. It is now static, finer (higher frequency, fewer octaves) and about
+ * half the previous opacity, so it registers as surface texture rather than
+ * as something happening.
+ *
+ * To remove it altogether, delete <Grain /> from app/layout.tsx.
+ * To make it more or less present, adjust `opacity` below — the useful range
+ * is roughly 0.015 (barely there) to 0.05 (heavy).
+ */
 .grain-overlay {
   position: fixed;
-  inset: -100%;
+  inset: 0;
   z-index: 60;
   pointer-events: none;
-  opacity: 0.05;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 320 320' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  will-change: transform;
-  animation: grain-drift 700ms steps(3) infinite;
+  opacity: 0.022;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.4' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 160px 160px;
 }
 
-@keyframes grain-drift {
-  0% {
-    transform: translate3d(0, 0, 0);
-  }
-  33% {
-    transform: translate3d(-2%, 1.5%, 0);
-  }
-  66% {
-    transform: translate3d(1.5%, -1%, 0);
-  }
-  100% {
-    transform: translate3d(0, 0, 0);
-  }
-}
-
-/* Soft moving light used behind dark sections. */
+/**
+ * Soft coloured light behind dark sections. Deliberately slow and shallow —
+ * it should read as the room breathing, never as a moving shape. Shortening
+ * the duration or widening the transform is what makes this look like a
+ * screensaver.
+ */
 @keyframes aurora {
   0%,
   100% {
-    transform: translate3d(-4%, 0, 0) scale(1);
-    opacity: 0.5;
+    transform: translate3d(-1.5%, 0, 0) scale(1);
+    opacity: 0.55;
   }
   50% {
-    transform: translate3d(4%, -3%, 0) scale(1.12);
-    opacity: 0.75;
+    transform: translate3d(1.5%, -1%, 0) scale(1.05);
+    opacity: 0.7;
   }
 }
 
 .aurora {
-  animation: aurora 18s var(--ease-village) infinite;
+  animation: aurora 34s ease-in-out infinite;
 }
 
 /* The slow ambient drift on the hero's fallback photograph. */
@@ -469,7 +472,7 @@
     scroll-behavior: auto !important;
   }
 
-  .grain-overlay,
+  /* The grain is static now, so it needs no entry here. */
   .ken-burns,
   .aurora,
   .marquee-track,

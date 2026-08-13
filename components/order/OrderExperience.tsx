@@ -180,25 +180,36 @@ export function OrderExperience() {
             )}
           </div>
 
-          {/* ── Order summary ───────────────────────────────────────────── */}
+          {/* ── Order summary ───────────────────────────────────────────────
+              Laid out so the guest never has to scroll to fill in their
+              details or reach the order button. On large screens the panel is
+              capped to the viewport and split into three parts: a fixed
+              header, an item list that scrolls on its own once it gets long,
+              and the details + total + button, which always stay in view.
+              Below lg it simply flows down the page as normal. */}
           <div className="min-w-0 lg:col-span-5">
-            <div className="lg:sticky lg:top-28">
-              <div className="border border-gold/20 bg-surface/60">
-                <header className="flex items-baseline justify-between gap-4 border-b border-gold/15 px-6 py-5">
+            <div className="lg:sticky lg:top-24">
+              <div className="flex flex-col border border-gold/20 bg-surface/60 lg:max-h-[calc(100dvh-7rem)]">
+                <header className="flex shrink-0 items-baseline justify-between gap-4 border-b border-gold/15 px-6 py-4">
                   <h2 className="font-display text-2xl text-cream">Your order</h2>
                   <span className="font-sans text-[0.625rem] tracking-[0.22em] text-cream/45 tabular-nums uppercase">
                     {count} {count === 1 ? 'item' : 'items'}
                   </span>
                 </header>
 
-                <div className="px-6 py-6">
+                {/* Items — the only variable-length part, so it takes the
+                    scrolling and leaves everything below it visible. */}
+                <div className="shrink-0 px-6">
                   {lines.length === 0 ? (
-                    <p className="py-8 text-center text-sm leading-relaxed text-cream/45">
+                    <p className="py-7 text-center text-sm leading-relaxed text-cream/45">
                       Nothing here yet. Add something from the list and it will appear
                       right away.
                     </p>
                   ) : (
-                    <ul className="flex flex-col gap-4">
+                    <ul
+                      data-lenis-prevent
+                      className="flex max-h-[26vh] flex-col gap-3 overflow-y-auto overscroll-contain py-3.5 lg:max-h-[19vh]"
+                    >
                       <AnimatePresence initial={false} mode="popLayout">
                         {lines.map((line) => (
                           <motion.li
@@ -208,7 +219,7 @@ export function OrderExperience() {
                             animate={{ opacity: 1, x: 0 }}
                             exit={{ opacity: 0, x: 16, height: 0 }}
                             transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-                            className="flex items-center justify-between gap-3 border-b border-gold/10 pb-4"
+                            className="flex items-center justify-between gap-3 border-b border-gold/10 pb-3"
                           >
                             <div className="min-w-0 flex-1">
                               <p className="truncate font-sans text-sm text-cream">
@@ -227,7 +238,7 @@ export function OrderExperience() {
                               min={0}
                             />
 
-                            <span className="w-24 shrink-0 text-right font-sans text-sm text-gold tabular-nums">
+                            <span className="w-20 shrink-0 text-right font-sans text-sm text-gold tabular-nums">
                               {formatPrice(line.price * line.quantity)}
                             </span>
                           </motion.li>
@@ -235,13 +246,22 @@ export function OrderExperience() {
                       </AnimatePresence>
                     </ul>
                   )}
+                </div>
 
-                  <div className="mt-7">
-                    <h3 className="eyebrow mb-6">Your details</h3>
-                    <OrderDetailsFields errors={errors} clearError={clearError} compact />
-                  </div>
+                {/* Details — always on screen. Only scrolls internally if the
+                    viewport is genuinely too short to hold the form. */}
+                <div className="min-h-0 flex-1 overflow-y-auto border-t border-gold/15 px-6 py-4">
+                  <h3 className="eyebrow mb-4">Your details</h3>
+                  <OrderDetailsFields
+                    errors={errors}
+                    clearError={clearError}
+                    density="compact"
+                  />
+                </div>
 
-                  <dl className="mt-8 flex flex-col gap-2.5 border-t border-gold/15 pt-6">
+                {/* Total and call to action — pinned to the foot of the panel. */}
+                <div className="shrink-0 border-t border-gold/15 bg-ink/40 px-6 py-4">
+                  <dl className="mb-4 flex flex-col gap-1.5">
                     <div className="flex items-baseline justify-between">
                       <dt className="font-sans text-[0.6875rem] tracking-[0.2em] text-cream/50 uppercase">
                         Subtotal
@@ -262,18 +282,18 @@ export function OrderExperience() {
                       </div>
                     )}
 
-                    <div className="mt-2 flex items-baseline justify-between border-t border-gold/15 pt-4">
+                    <div className="mt-1.5 flex items-baseline justify-between border-t border-gold/15 pt-3">
                       <dt className="font-sans text-[0.75rem] font-semibold tracking-[0.2em] text-champagne uppercase">
                         Total
                       </dt>
-                      <dd className="font-display text-3xl text-gold tabular-nums">
+                      <dd className="font-display text-2xl text-gold tabular-nums">
                         {formatPrice(total)}
                       </dd>
                     </div>
                   </dl>
 
                   {errors.cart && (
-                    <p role="alert" className="mt-4 text-xs text-ember">
+                    <p role="alert" className="mb-3 text-xs text-ember">
                       {errors.cart}
                     </p>
                   )}
@@ -281,24 +301,23 @@ export function OrderExperience() {
                   <button
                     type="button"
                     onClick={submit}
-                    className="mt-6 flex w-full items-center justify-center gap-3 bg-gold px-6 py-5 font-sans text-[0.75rem] font-semibold tracking-[0.2em] text-ink uppercase transition-colors duration-300 hover:bg-champagne"
+                    className="flex w-full items-center justify-center gap-3 bg-gold px-6 py-4 font-sans text-[0.75rem] font-semibold tracking-[0.2em] text-ink uppercase transition-colors duration-300 hover:bg-champagne"
                   >
                     <WhatsAppGlyph className="h-4 w-4" />
                     Order via WhatsApp
                   </button>
 
-                  <Link
-                    href="/menu"
-                    className="mt-3 block border border-gold/25 px-6 py-4 text-center font-sans text-[0.6875rem] font-semibold tracking-[0.18em] text-cream/80 uppercase transition-colors duration-300 hover:border-gold hover:text-gold"
-                  >
-                    Continue shopping
-                  </Link>
-
-                  <p className="mt-5 text-center text-[0.6875rem] leading-relaxed text-cream/35">
-                    Your order opens in WhatsApp with everything filled in. Nothing is
-                    charged online — you confirm the total and payment directly with{' '}
-                    {restaurantConfig.name}.
-                  </p>
+                  <div className="mt-2.5 flex items-center justify-between gap-4">
+                    <Link
+                      href="/menu"
+                      className="font-sans text-[0.625rem] font-semibold tracking-[0.18em] text-cream/50 uppercase transition-colors duration-300 hover:text-gold"
+                    >
+                      Continue shopping
+                    </Link>
+                    <p className="text-right text-[0.625rem] leading-snug text-cream/35">
+                      Confirmed on WhatsApp with {restaurantConfig.name}
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>

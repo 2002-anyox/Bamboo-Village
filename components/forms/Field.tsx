@@ -9,12 +9,22 @@ import { cn } from '@/lib/utils';
  * invalid fields are wired up with aria-invalid / aria-describedby.
  */
 
-const controlClasses = cn(
-  'w-full border border-gold/20 bg-ink/50 px-4 py-3.5 font-sans text-[0.9375rem] text-cream',
-  'placeholder:text-cream/30',
-  'transition-colors duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]',
-  'hover:border-gold/35 focus:border-gold focus:outline-none',
-);
+/**
+ * `density` trades vertical space for breathing room. 'compact' is used
+ * wherever a form has to share a screen with something else — the checkout
+ * panel, the cart drawer — so the guest never has to scroll to reach the
+ * fields or the submit button. Touch targets stay at least 44px tall in both.
+ */
+export type Density = 'comfortable' | 'compact';
+
+const controlClasses = (density: Density) =>
+  cn(
+    'w-full border border-gold/20 bg-ink/50 px-4 font-sans text-[0.9375rem] text-cream',
+    density === 'compact' ? 'py-2.5' : 'py-3.5',
+    'placeholder:text-cream/30',
+    'transition-colors duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]',
+    'hover:border-gold/35 focus:border-gold focus:outline-none',
+  );
 
 function Shell({
   label,
@@ -23,6 +33,7 @@ function Shell({
   hint,
   required,
   className,
+  density = 'comfortable',
   children,
 }: {
   label: string;
@@ -31,13 +42,23 @@ function Shell({
   hint?: string;
   required?: boolean;
   className?: string;
+  density?: Density;
   children: ReactNode;
 }) {
   return (
-    <div className={cn('flex flex-col gap-2', className)}>
+    <div
+      className={cn(
+        'flex min-w-0 flex-col',
+        density === 'compact' ? 'gap-1.5' : 'gap-2',
+        className,
+      )}
+    >
       <label
         htmlFor={htmlFor}
-        className="font-sans text-[0.6875rem] font-semibold tracking-[0.22em] text-champagne/70 uppercase"
+        className={cn(
+          'font-sans font-semibold tracking-[0.22em] text-champagne/70 uppercase',
+          density === 'compact' ? 'text-[0.625rem]' : 'text-[0.6875rem]',
+        )}
       >
         {label}
         {required && (
@@ -70,6 +91,7 @@ type CommonProps = {
   placeholder?: string;
   className?: string;
   autoComplete?: string;
+  density?: Density;
 };
 
 export function TextField({
@@ -95,6 +117,7 @@ export function TextField({
       hint={props.hint}
       required={props.required}
       className={props.className}
+      density={props.density}
     >
       <input
         id={id}
@@ -109,7 +132,7 @@ export function TextField({
         autoComplete={props.autoComplete}
         aria-invalid={props.error ? true : undefined}
         aria-describedby={props.error ? errorId : undefined}
-        className={cn(controlClasses, props.error && 'border-ember/70')}
+        className={cn(controlClasses(props.density ?? 'comfortable'), props.error && 'border-ember/70')}
       />
       {props.error && (
         <span id={errorId} className="sr-only">
@@ -134,6 +157,7 @@ export function TextAreaField({
       hint={props.hint}
       required={props.required}
       className={props.className}
+      density={props.density}
     >
       <textarea
         id={id}
@@ -143,7 +167,7 @@ export function TextAreaField({
         placeholder={props.placeholder}
         required={props.required}
         aria-invalid={props.error ? true : undefined}
-        className={cn(controlClasses, 'resize-y', props.error && 'border-ember/70')}
+        className={cn(controlClasses(props.density ?? 'comfortable'), 'resize-y', props.error && 'border-ember/70')}
       />
     </Shell>
   );
@@ -163,6 +187,7 @@ export function SelectField({
       hint={props.hint}
       required={props.required}
       className={props.className}
+      density={props.density}
     >
       <div className="relative">
         <select
@@ -172,7 +197,7 @@ export function SelectField({
           required={props.required}
           aria-invalid={props.error ? true : undefined}
           className={cn(
-            controlClasses,
+            controlClasses(props.density ?? 'comfortable'),
             'appearance-none pr-11',
             props.error && 'border-ember/70',
           )}
@@ -199,16 +224,25 @@ export function ToggleGroup<T extends string>({
   onChange,
   options,
   className,
+  density = 'comfortable',
 }: {
   label: string;
   value: T;
   onChange: (value: T) => void;
   options: { value: T; label: string; hint?: string }[];
   className?: string;
+  density?: Density;
 }) {
+  const compact = density === 'compact';
+
   return (
-    <fieldset className={cn('flex flex-col gap-2', className)}>
-      <legend className="mb-2 font-sans text-[0.6875rem] font-semibold tracking-[0.22em] text-champagne/70 uppercase">
+    <fieldset className={cn('flex min-w-0 flex-col', className)}>
+      <legend
+        className={cn(
+          'font-sans font-semibold tracking-[0.22em] text-champagne/70 uppercase',
+          compact ? 'mb-1.5 text-[0.625rem]' : 'mb-2 text-[0.6875rem]',
+        )}
+      >
         {label}
       </legend>
       <div className="grid grid-cols-2 gap-2">
@@ -222,17 +256,25 @@ export function ToggleGroup<T extends string>({
               aria-checked={active}
               onClick={() => onChange(option.value)}
               className={cn(
-                'border px-4 py-3.5 text-center transition-all duration-300',
+                'border text-center transition-all duration-300',
                 'ease-[cubic-bezier(0.22,1,0.36,1)]',
+                // Stays a comfortable tap target even when compact.
+                compact ? 'px-3 py-2.5' : 'px-4 py-3.5',
                 active
                   ? 'border-gold bg-gold text-ink'
                   : 'border-gold/20 text-cream/70 hover:border-gold/50 hover:text-cream',
               )}
             >
-              <span className="block font-sans text-[0.6875rem] font-semibold tracking-[0.2em] uppercase">
+              <span
+                className={cn(
+                  'block font-sans font-semibold tracking-[0.2em] uppercase',
+                  compact ? 'text-[0.625rem]' : 'text-[0.6875rem]',
+                )}
+              >
                 {option.label}
               </span>
-              {option.hint && (
+              {/* The hint is the first thing to go when space is tight. */}
+              {option.hint && !compact && (
                 <span
                   className={cn(
                     'mt-1 block text-[0.6875rem]',

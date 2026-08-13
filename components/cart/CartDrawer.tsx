@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useCart } from './CartProvider';
@@ -30,7 +30,6 @@ export function CartDrawer() {
   } = useCart();
 
   const { errors, submit, clearError } = useOrderCheckout();
-  const [showDetails, setShowDetails] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
 
@@ -67,26 +66,6 @@ export function CartDrawer() {
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
   }, [isOpen, closeCart]);
-
-  // Once the guest has items, reveal the detail fields automatically.
-  useEffect(() => {
-    if (lines.length > 0) return;
-    setShowDetails(false);
-  }, [lines.length]);
-
-  const handleOrder = () => {
-    if (!showDetails) {
-      setShowDetails(true);
-      // Give the fields a frame to mount before scrolling to them.
-      requestAnimationFrame(() => {
-        panelRef.current
-          ?.querySelector('#cart-details')
-          ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      });
-      return;
-    }
-    submit();
-  };
 
   return (
     <AnimatePresence>
@@ -177,26 +156,18 @@ export function CartDrawer() {
                     Clear order
                   </button>
 
-                  <AnimatePresence initial={false}>
-                    {showDetails && (
-                      <motion.div
-                        id="cart-details"
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: 'auto' }}
-                        exit={{ opacity: 0, height: 0 }}
-                        transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-                        className="overflow-hidden"
-                      >
-                        <div className="rule-gold my-8" />
-                        <p className="eyebrow mb-6">Your details</p>
-                        <OrderDetailsFields
-                          errors={errors}
-                          clearError={clearError}
-                          compact
-                        />
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
+                  {/* Details are shown straight away rather than behind a
+                      "continue" step — one screen, no extra tap, and the
+                      guest can start typing as soon as the panel opens. */}
+                  <div id="cart-details">
+                    <div className="rule-gold my-6" />
+                    <p className="eyebrow mb-4">Your details</p>
+                    <OrderDetailsFields
+                      errors={errors}
+                      clearError={clearError}
+                      density="compact"
+                    />
+                  </div>
                 </>
               )}
             </div>
@@ -243,7 +214,7 @@ export function CartDrawer() {
 
                 <button
                   type="button"
-                  onClick={handleOrder}
+                  onClick={submit}
                   className={cn(
                     'group relative flex w-full items-center justify-center gap-3 overflow-hidden',
                     'bg-gold px-6 py-4.5 font-sans text-[0.75rem] font-semibold',
@@ -252,7 +223,7 @@ export function CartDrawer() {
                   )}
                 >
                   <WhatsAppGlyph className="h-4 w-4" />
-                  {showDetails ? 'Order via WhatsApp' : 'Continue to details'}
+                  Order via WhatsApp
                 </button>
 
                 <div className="mt-3 flex gap-3">
